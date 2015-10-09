@@ -19,8 +19,8 @@ export function convertTextSync(text: string, options: LF.Options) {
     fs.writeFileSync(options.target, newText, { encoding: options.encoding });
 }
 
-export function convertTextStream(text: string, options: LF.Options): NodeJS.ReadableStream {        
-    return new ConvertStream(text, options, false);
+export function convertTextStream(text: string, options: LF.Options) {        
+    return ConvertStream(text, options, false);
 }
 
 export function convertSync(filename: string, options: LF.Options) {
@@ -36,13 +36,13 @@ export function convert(filename: string, options: LF.Options, callback?: (error
     fs.readFile(path.resolve(filename), readCallback(options, callback));
 }
 
-export function stream(filename: string, options: LF.Options): NodeJS.ReadableStream {
+export function stream(filename: string, options: LF.Options) {
     options = options || <any>{};
     options.target = 'stream';
 
     validateOptions(options);
 
-    return new ConvertStream(path.resolve(filename), options);
+    return ConvertStream(path.resolve(filename), options);
 }
 
 export var ending = {
