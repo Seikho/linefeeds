@@ -1,9 +1,10 @@
 import LF = require('../index.d.ts');
 import fs = require('fs');
 import path = require('path');
-import streams = require('stream');
+import replace = require('./replace');
 import validate = require('./options');
 import validateOptions = validate.validateOptions;
+import ConvertStream = require('./convertStream');
 
 export function convertText(text: string, options: LF.Options, callback?: (error?: any) => void) {
     validateOptions(options);
@@ -19,12 +20,12 @@ export function convertTextSync(text: string, options: LF.Options) {
 }
 
 export function convertTextStream(text: string, options: LF.Options): NodeJS.ReadableStream {        
-    return new StringStream(text, options, false);
+    return new ConvertStream(text, options, false);
 }
 
 export function convertSync(filename: string, options: LF.Options) {
     validateOptions(options);
-    var inputFile = fs.readFileSync(filename).toString(options.encoding);
+    var inputFile = fs.readFileSync(path.resolve(filename)).toString(options.encoding);
 
     var newFile = replace(inputFile, options.ending);
     fs.writeFileSync(options.target, newFile);
@@ -32,7 +33,7 @@ export function convertSync(filename: string, options: LF.Options) {
 
 export function convert(filename: string, options: LF.Options, callback?: (error?: any) => void) {
     validateOptions(options);
-    fs.readFile(filename, readCallback(options, callback));
+    fs.readFile(path.resolve(filename), readCallback(options, callback));
 }
 
 export function stream(filename: string, options: LF.Options): NodeJS.ReadableStream {
@@ -41,7 +42,7 @@ export function stream(filename: string, options: LF.Options): NodeJS.ReadableSt
 
     validateOptions(options);
 
-    return new StringStream(filename, options);
+    return new ConvertStream(path.resolve(filename), options);
 }
 
 export var ending = {
@@ -57,36 +58,5 @@ function readCallback(options: LF.Options, callback?: (error?: any) => void) {
     }
 }
 
-function replace(content: string, endings: string) {
-    
-    // Ensure we have one style of ending in the file
-    var newContent = content.replace(new RegExp('(\r\n)|(\r \n)|(\R)', 'g'), '\n');
 
-    return newContent.replace(new RegExp('\n', 'g'), endings);
-}
 
-class StringStream extends streams.Readable {
-    constructor(input: string, options: LF.Options, isFile = true) {
-        super();
-
-        if (isFile) {
-            fs.createReadStream(input, { encoding: options.encoding })
-                .on('data', data => this.buffer += replace(data.toString(), options.ending));
-            return;
-        }
-        
-        if (typeof input !== 'string') input = input.toString();        
-        this.buffer = replace(input, options.ending);
-
-    }
-    buffer: string = null;
-
-    _read(size: number): void {
-        if (this.buffer !== null) {
-            this.push(this.buffer);
-            this.buffer = null;
-        }
-
-        this.push(null);
-    }
-}
