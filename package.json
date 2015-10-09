@@ -4,7 +4,8 @@
   "description": "Convert file line endings",
   "main": "src/index",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
