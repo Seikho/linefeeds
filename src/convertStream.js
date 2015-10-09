@@ -9,25 +9,30 @@ var fs = require('fs');
 var ConvertStream = (function (_super) {
     __extends(ConvertStream, _super);
     function ConvertStream(input, options, isFile) {
-        var _this = this;
         if (isFile === void 0) { isFile = true; }
         _super.call(this);
-        this.buffer = null;
-        if (isFile) {
-            fs.createReadStream(input, { encoding: options.encoding })
-                .on('data', function (data) { return _this.buffer += replace(data.toString(), options.ending); });
-            return;
-        }
-        if (typeof input !== 'string')
-            input = input.toString();
-        this.buffer = replace(input, options.ending);
+        this.input = '';
+        this.options = null;
+        this.isFile = true;
+        this.input = input;
+        this.options = options;
+        this.isFile = isFile;
     }
     ConvertStream.prototype._read = function (size) {
-        if (this.buffer !== null) {
-            this.push(this.buffer);
-            this.buffer = null;
+        var _this = this;
+        var callback = function (err, content) {
+            if (err)
+                throw new Error("Failed to read file: " + err);
+            if (typeof content !== 'string')
+                content = content.toString(_this.options.encoding);
+            var newContent = replace(content, _this.options.ending);
+            _this.push(newContent);
+            _this.push(null);
+        };
+        if (this.isFile) {
+            return fs.readFile(this.input, { encoding: this.options.encoding }, callback);
         }
-        this.push(null);
+        callback(null, this.input);
     };
     return ConvertStream;
 })(stream.Readable);

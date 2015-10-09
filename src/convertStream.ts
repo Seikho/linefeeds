@@ -7,25 +7,30 @@ export = ConvertStream;
 class ConvertStream extends stream.Readable {
     constructor(input: string, options: LF.Options, isFile = true) {
         super();
-
-        if (isFile) {
-            fs.createReadStream(input, { encoding: options.encoding })
-                .on('data', data => this.buffer += replace(data.toString(), options.ending));
-            return;
-        }
-        
-        if (typeof input !== 'string') input = input.toString();        
-        this.buffer = replace(input, options.ending);
-
+        this.input = input;
+        this.options = options;
+        this.isFile = isFile;
     }
-    buffer: string = null;
+    
+    input: string = '';
+    options: LF.Options = null;
+    isFile: boolean = true;
 
     _read(size: number): void {
-        if (this.buffer !== null) {
-            this.push(this.buffer);
-            this.buffer = null;
+        var callback = (err, content) => {
+            if (err) throw new Error(`Failed to read file: ${err}`);
+            if (typeof content !== 'string') content = content.toString(this.options.encoding);
+            
+            var newContent = replace(content, this.options.ending);
+
+            this.push(newContent);
+            this.push(null);
         }
 
-        this.push(null);
+        if (this.isFile) {
+            return fs.readFile(this.input, { encoding: this.options.encoding }, callback);
+        }
+        
+        callback(null, this.input);
     }
 }

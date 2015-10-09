@@ -54,7 +54,9 @@ function readCallback(options: LF.Options, callback?: (error?: any) => void) {
     return (readError?: any, content?: Buffer) => {
         if (!callback) return;
         if (readError) return callback(readError);
-        fs.writeFile(options.target, content.toString(options.encoding), callback);
+        
+        var newContent = replace(content.toString(options.encoding), options.ending);
+        fs.writeFile(options.target, newContent, callback);
     }
 }
 
