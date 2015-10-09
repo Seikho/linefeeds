@@ -1,0 +1,32 @@
+{
+  "name": "linefeeds",
+  "version": "0.1.0",
+  "description": "Convert file line endings",
+  "main": "src/index",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seikho/linefeeds.git"
+  },
+  "keywords": [
+    "crlf",
+    "lf",
+    "convert",
+    "line",
+    "feed",
+    "end"
+  ],
+  "author": "Carl Winkler",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/seikho/linefeeds/issues"
+  },
+  "homepage": "https://github.com/seikho/linefeeds#readme",
+  "devDependencies": {
+    "chai": "^3.3.0",
+    "mocha": "^2.3.3",
+    "typescript": "^1.6.2"
+  }
+}
