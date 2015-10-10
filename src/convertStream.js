@@ -9,60 +9,32 @@ var fs = require('fs');
 var ConvertStream = (function (_super) {
     __extends(ConvertStream, _super);
     function ConvertStream(input, options, isFile) {
+        var _this = this;
         if (isFile === void 0) { isFile = true; }
         _super.call(this);
-        this.input = '';
-        this.options = null;
-        this.isFile = true;
-        this.buffer = '';
         this.input = input;
         this.options = options;
         this.isFile = isFile;
-        this._read = this._read.bind(this);
-    }
-    ConvertStream.prototype._read = function (size) {
-        var _this = this;
-        var callback = function (err, content) {
-            if (err)
-                throw new Error("Failed to read file: " + err);
+        this.isDone = false;
+        this.convert = function (error, content) {
+            if (error)
+                throw new Error("Unable to read file: " + error);
             if (typeof content !== 'string')
                 content = content.toString(_this.options.encoding);
             var newContent = replace(content, _this.options.ending);
-            _this.buffer += newContent;
-            console.log(_this.buffer);
             _this.push(newContent);
-            _this.push(null);
+            _this.isDone = true;
         };
-        if (this.isFile) {
-            return fs.readFile(this.input, { encoding: this.options.encoding }, callback);
+    }
+    ConvertStream.prototype._read = function (size) {
+        if (this.isDone) {
+            this.push(null);
+            return;
         }
-        callback(null, this.input);
+        if (this.isFile)
+            return fs.readFile(this.input, { encoding: this.options.encoding }, this.convert);
+        this.convert(null, this.input);
     };
     return ConvertStream;
 })(stream.Readable);
-function convert(input, options, isFile) {
-    if (isFile === void 0) { isFile = true; }
-    var Readable = stream.Readable;
-    var buffer = '';
-    return new Readable({
-        read: function (size) {
-            var _this = this;
-            var callback = function (err, content) {
-                if (err)
-                    throw new Error("Failed to read file: " + err);
-                if (typeof content !== 'string')
-                    content = content.toString(options.encoding);
-                var newContent = replace(content, options.ending);
-                buffer += newContent;
-                _this.push(newContent);
-                _this.push(null);
-            };
-            if (isFile) {
-                return fs.readFile(input, callback);
-            }
-            else
-                callback(null, input);
-        }
-    });
-}
-module.exports = convert;
+module.exports = ConvertStream;

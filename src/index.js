@@ -17,7 +17,7 @@ function convertTextSync(text, options) {
 }
 exports.convertTextSync = convertTextSync;
 function convertTextStream(text, options) {
-    return ConvertStream(text, options, false);
+    return new ConvertStream(text, options, false);
 }
 exports.convertTextStream = convertTextStream;
 function convertSync(filename, options) {
@@ -36,7 +36,7 @@ function stream(filename, options) {
     options = options || {};
     options.target = 'stream';
     validateOptions(options);
-    return ConvertStream(path.resolve(filename), options);
+    return new ConvertStream(path.resolve(filename), options);
 }
 exports.stream = stream;
 exports.ending = {

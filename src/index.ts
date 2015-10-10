@@ -20,7 +20,7 @@ export function convertTextSync(text: string, options: LF.Options) {
 }
 
 export function convertTextStream(text: string, options: LF.Options) {        
-    return ConvertStream(text, options, false);
+    return new ConvertStream(text, options, false);
 }
 
 export function convertSync(filename: string, options: LF.Options) {
@@ -42,7 +42,7 @@ export function stream(filename: string, options: LF.Options) {
 
     validateOptions(options);
 
-    return ConvertStream(path.resolve(filename), options);
+    return new ConvertStream(path.resolve(filename), options);
 }
 
 export var ending = {
