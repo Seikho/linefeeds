@@ -1,8 +1,8 @@
-export function contextText(text: string, options: Options, callback?: (error?: any) => void): void;
+export function convertText(text: string, options: Options, callback?: (error?: any) => void): void;
 
-export function contextTextSync(text: string, options: Options): void;
+export function convertTextSync(text: string, options: Options): void;
 
-export function contextTextStream(text: string, options: Options): NodeJS.ReadableStream;
+export function convertTextStream(text: string, options: Options): NodeJS.ReadableStream;
 
 export function stream(filename: string, options: Options): NodeJS.ReadableStream;
 
