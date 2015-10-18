@@ -10,12 +10,9 @@ export function convert(filename: string, options: Options): Promise<void>;
 
 export function convertSync(filename: string, options: Options): void;
 
-export var ending: Ending;
+export var crlf: string;
 
-export interface Ending {
-    lf: string;
-    crlf: string;
-}
+export var lf: string; 
 
 export interface Options {
     // Defaults to utf-8
