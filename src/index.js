@@ -21,14 +21,14 @@ function convertTextStream(text, options) {
 }
 exports.convertTextStream = convertTextStream;
 function convertSync(filename, options) {
-    validateOptions(options);
+    validateOptions(options, filename);
     var inputFile = fs.readFileSync(path.resolve(filename)).toString(options.encoding);
     var newFile = replace(inputFile, options.ending);
     fs.writeFileSync(options.target, newFile);
 }
 exports.convertSync = convertSync;
 function convert(filename, options, callback) {
-    validateOptions(options);
+    validateOptions(options, filename);
     fs.readFile(path.resolve(filename), readCallback(options, callback));
 }
 exports.convert = convert;
@@ -39,10 +39,8 @@ function stream(filename, options) {
     return new ConvertStream(path.resolve(filename), options);
 }
 exports.stream = stream;
-exports.ending = {
-    crlf: '\r\n',
-    lf: '\n'
-};
+exports.crlf = '\r\n';
+exports.lf = '\n';
 function readCallback(options, callback) {
     return function (readError, content) {
         if (!callback)

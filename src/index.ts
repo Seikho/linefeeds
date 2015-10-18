@@ -19,7 +19,7 @@ export function convertTextSync(text: string, options: LF.Options) {
     fs.writeFileSync(options.target, newText, { encoding: options.encoding });
 }
 
-export function convertTextStream(text: string, options: LF.Options) {        
+export function convertTextStream(text: string, options: LF.Options) {
     return new ConvertStream(text, options, false);
 }
 
@@ -45,16 +45,16 @@ export function stream(filename: string, options: LF.Options) {
     return new ConvertStream(path.resolve(filename), options);
 }
 
-export var ending = {
-    crlf: '\r\n',
-    lf: '\n'
-};
+
+export var crlf = '\r\n';
+export var lf = '\n';
+
 
 function readCallback(options: LF.Options, callback?: (error?: any) => void) {
     return (readError?: any, content?: Buffer) => {
         if (!callback) return;
         if (readError) return callback(readError);
-        
+
         var newContent = replace(content.toString(options.encoding), options.ending);
         fs.writeFile(options.target, newContent, callback);
     }
