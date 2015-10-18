@@ -4,12 +4,14 @@ import path = require('path');
 /**
  * Will throw if options are invalid
  */
-export function validateOptions(options: LF.Options): void {
+export function validateOptions(options: LF.Options, filename?: string): void {
     if (!options) throw new Error(errors.NotSupplied)
     if (!options.ending) throw new Error(errors.NoEnding);
+    if (!options.encoding) options.encoding = 'utf8';
+    
+    if (!options.target && filename) options.target = filename;
     if (!options.target) throw new Error(errors.NoTarget);
     
-    if (!options.encoding) options.encoding = 'utf8';
     options.target = path.resolve(options.target);
 }
 

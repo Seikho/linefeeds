@@ -24,7 +24,7 @@ export function convertTextStream(text: string, options: LF.Options) {
 }
 
 export function convertSync(filename: string, options: LF.Options) {
-    validateOptions(options);
+    validateOptions(options, filename);
     var inputFile = fs.readFileSync(path.resolve(filename)).toString(options.encoding);
 
     var newFile = replace(inputFile, options.ending);
@@ -32,7 +32,7 @@ export function convertSync(filename: string, options: LF.Options) {
 }
 
 export function convert(filename: string, options: LF.Options, callback?: (error?: any) => void) {
-    validateOptions(options);
+    validateOptions(options, filename);
     fs.readFile(path.resolve(filename), readCallback(options, callback));
 }
 

@@ -2,15 +2,17 @@ var path = require('path');
 /**
  * Will throw if options are invalid
  */
-function validateOptions(options) {
+function validateOptions(options, filename) {
     if (!options)
         throw new Error(exports.errors.NotSupplied);
     if (!options.ending)
         throw new Error(exports.errors.NoEnding);
-    if (!options.target)
-        throw new Error(exports.errors.NoTarget);
     if (!options.encoding)
         options.encoding = 'utf8';
+    if (!options.target && filename)
+        options.target = filename;
+    if (!options.target)
+        throw new Error(exports.errors.NoTarget);
     options.target = path.resolve(options.target);
 }
 exports.validateOptions = validateOptions;
